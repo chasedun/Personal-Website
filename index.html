@@ -84,7 +84,7 @@
             width: 150px; /* Size for the llama image */
             height: 150px;
             z-index: 3;
-            animation: llamaFloat 35s linear infinite;
+            animation: llamaFloat 25s ease-in-out infinite;
         }
 
         .llama-image {
@@ -114,10 +114,19 @@
         /* Llama floating animation with rotation */
         @keyframes llamaFloat {
             0% {
-                transform: translateX(-100px) rotate(0deg) scale(0.5);
+                transform: translateX(-100px) rotate(-30deg) scale(0.6);
+            }
+            25% {
+                transform: translateX(calc(25vw - 75px)) rotate(45deg) scale(1.2);
+            }
+            50% {
+                transform: translateX(calc(50vw - 75px)) rotate(120deg) scale(1.8);
+            }
+            75% {
+                transform: translateX(calc(75vw - 75px)) rotate(280deg) scale(2.4);
             }
             100% {
-                transform: translateX(calc(100vw + 300px)) rotate(700deg) scale(4);
+                transform: translateX(calc(100vw + 150px)) rotate(400deg) scale(2.8);
             }
         }
 
@@ -155,7 +164,7 @@
     
     <!-- Animated Space Llama -->
     <div class="space-llama">
-        <img src="C:\Users\chase\Code\Personal-Website\Images\funny-llama.png" alt="Space Llama" class="llama-image">
+        <img src="Images/funny-llama.png" alt="Space Llama" class="llama-image">
     </div>
 
     <script>
@@ -256,40 +265,32 @@
         // Space object spawning and management
         let lastSpawnedObject = null; // Track the last spawned object
         let isMouseDown = false; // Track if mouse is held down
-        let lastSpawnPosition = null; // Track last spawn position for distance calculation
+        let hasSpawnedThisClick = false; // Track if we've already spawned an object for this click
         
         function setupSpaceObjectSpawner() {
             document.addEventListener('mousedown', (e) => {
                 isMouseDown = true;
-                lastSpawnPosition = { x: e.clientX, y: e.clientY };
-                spawnSpaceObject(e.clientX, e.clientY);
+                hasSpawnedThisClick = false; // Reset spawn flag on new mouse down
             });
             
             document.addEventListener('mousemove', (e) => {
-                if (isMouseDown && lastSpawnPosition) {
-                    // Calculate distance moved since last spawn
-                    const distance = Math.sqrt(
-                        Math.pow(e.clientX - lastSpawnPosition.x, 2) + 
-                        Math.pow(e.clientY - lastSpawnPosition.y, 2)
-                    );
-                    
-                    // Spawn object every 10 pixels
-                    if (distance >= 50) {
-                        spawnSpaceObject(e.clientX, e.clientY);
-                        lastSpawnPosition = { x: e.clientX, y: e.clientY };
-                    }
+                // Only spawn objects while dragging if we haven't spawned one yet for this click
+                if (isMouseDown && !hasSpawnedThisClick) {
+                    spawnSpaceObject(e.clientX, e.clientY);
+                    hasSpawnedThisClick = true; // Mark that we've spawned an object for this click
                 }
             });
             
             document.addEventListener('mouseup', () => {
                 isMouseDown = false;
-                lastSpawnPosition = null;
+                // Don't reset hasSpawnedThisClick here to prevent spawning on mouseup
             });
             
-            // Keep original click functionality for single clicks
+            // Single click handler - only spawn if we haven't spawned during this click sequence
             document.addEventListener('click', (e) => {
-                if (!isMouseDown) { // Only spawn if not already spawning from drag
+                if (!hasSpawnedThisClick) {
                     spawnSpaceObject(e.clientX, e.clientY);
+                    hasSpawnedThisClick = true;
                 }
             });
         }
