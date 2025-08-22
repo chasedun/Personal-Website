@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Website</title>
+    <title>Chase Dun - Space Theme</title>
     <style>
+        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -12,34 +13,228 @@
         }
 
         body {
-            background-color: black;
+            background-color: #000;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .title {
-            font-size: 4rem;
-            font-weight: 700;
-            color: white;
+        /* Starfield container */
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Individual star styling */
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        /* Twinkling animation for stars */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; }
+            25% { opacity: 0.3; }
+            50% { opacity: 1; }
+            75% { opacity: 0.3; }
+        }
+
+
+
+        /* Main title container */
+        .title-container {
+            position: absolute;
+            top: 25%; /* Positioned at top quarter of page */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
             text-align: center;
+        }
+
+        /* Main title styling */
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: #fff;
             letter-spacing: -0.02em;
             line-height: 1.1;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: titleGlow 4s ease-in-out infinite;
         }
 
+        /* Title glow animation */
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
+        }
+
+        /* Responsive design for mobile devices */
         @media (max-width: 768px) {
-            .title {
-                font-size: 2.5rem;
+            .main-title {
+                font-size: 3rem;
                 padding: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="title">
-        Chase Dun
+    <!-- Starfield container for dynamic star generation -->
+    <div id="starfield"></div>
+    
+    <!-- Main title positioned at top quarter -->
+    <div class="title-container">
+        <h1 class="main-title">Chase Dun</h1>
     </div>
+
+    <script>
+        // Starfield generation and management
+        class Starfield {
+            constructor() {
+                this.container = document.getElementById('starfield');
+                this.stars = [];
+                this.starCount = 1000; // Increased number of stars for denser starfield
+                this.seed = 137; // New seed for consistent star positions
+                this.init();
+            }
+
+            // Initialize the starfield
+            init() {
+                this.generateStars();
+            }
+
+            // Seeded random number generator for consistent star positions
+            seededRandom() {
+                // Simple but effective seeded random generator
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            }
+
+            // Generate individual stars with random properties
+            generateStars() {
+                const placedPositions = [];
+                
+                for (let i = 0; i < this.starCount; i++) {
+                    const star = this.createStar(placedPositions);
+                    if (star) {
+                        this.container.appendChild(star);
+                        this.stars.push(star);
+                        
+                        // Store the position to avoid clustering
+                        const rect = star.getBoundingClientRect();
+                        placedPositions.push({
+                            x: rect.left + rect.width / 2,
+                            y: rect.top + rect.height / 2
+                        });
+                    }
+                }
+            }
+
+            // Create a single star element
+            createStar(placedPositions) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                let x, y;
+                let attempts = 0;
+                const maxAttempts = 100; // Increased attempts for better distribution
+                
+                // Keep trying until we find a position not behind the title and not too close to other stars
+                do {
+                    x = this.seededRandom() * window.innerWidth;
+                    y = this.seededRandom() * window.innerHeight;
+                    attempts++;
+                } while ((this.isBehindTitle(x, y) || this.isTooCloseToOtherStars(x, y, placedPositions)) && attempts < maxAttempts);
+                
+                // If we couldn't find a good position after many attempts, skip this star
+                if (attempts >= maxAttempts) {
+                    return null;
+                }
+                
+                // Use seeded random for consistent positioning
+                const size = this.seededRandom() * 3 + 1; // Size between 1-4px
+                
+                // Create varied animation durations (3-8 seconds) to prevent synchronization
+                const duration = 3 + (this.seededRandom() * 5);
+                
+                // Create varied delays (0 to 8 seconds) to stagger the animations
+                const delay = this.seededRandom() * 8;
+                
+                // Calculate initial opacity based on delay and duration
+                // This ensures stars start at different points in their animation cycle
+                const cycleProgress = (delay / duration) % 1;
+                const initialOpacity = 0.1 + (0.9 * Math.sin(cycleProgress * 2 * Math.PI));
+                
+                // Apply styles with CSS custom properties for animation timing
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${x}px`;
+                star.style.top = `${y}px`;
+                star.style.opacity = Math.max(0.1, initialOpacity.toFixed(3)); // Ensure minimum visibility
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--delay', `-${delay}s`);
+                
+                return star;
+            }
+
+            // Check if a position is behind the title
+            isBehindTitle(x, y) {
+                const titleContainer = document.querySelector('.title-container');
+                if (!titleContainer) return false;
+                
+                const titleRect = titleContainer.getBoundingClientRect();
+                const padding = 20; // Extra padding around title
+                
+                return x >= titleRect.left - padding && 
+                       x <= titleRect.right + padding && 
+                       y >= titleRect.top - padding && 
+                       y <= titleRect.bottom + padding;
+            }
+
+            // Check if a position is too close to other stars
+            isTooCloseToOtherStars(x, y, placedPositions) {
+                const minDistance = 15; // Minimum distance between star centers
+                
+                for (const pos of placedPositions) {
+                    const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
+                    if (distance < minDistance) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+
+
+
+
+
+        }
+
+        // Initialize starfield when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new Starfield();
+        });
+
+        // Regenerate stars on window resize for responsive design
+        window.addEventListener('resize', () => {
+            const starfield = document.getElementById('starfield');
+            starfield.innerHTML = '';
+            new Starfield();
+        });
+    </script>
 </body>
 </html>
