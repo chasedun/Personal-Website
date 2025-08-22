@@ -76,11 +76,159 @@
             50% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
         }
 
+        /* Animated Sheep with Astronaut Helmet */
+        .space-sheep {
+            position: absolute;
+            top: 40%;
+            left: -150px; /* Start off-screen */
+            width: 60px; /* Smaller size to appear farther away */
+            height: 60px;
+            z-index: 3;
+            animation: sheepFloat 35s linear infinite;
+        }
+
+        .sheep-body {
+            position: absolute;
+            width: 45px; /* Scaled down proportionally */
+            height: 30px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .sheep-head {
+            position: absolute;
+            top: -12px;
+            left: 26px; /* Adjusted position for smaller size */
+            width: 19px; /* Scaled down proportionally */
+            height: 19px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .astronaut-helmet {
+            position: absolute;
+            top: -6px;
+            left: 22px; /* Adjusted position for smaller size */
+            width: 26px; /* Scaled down proportionally */
+            height: 26px;
+            background: linear-gradient(135deg, #87ceeb 0%, #4682b4 100%);
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
+        }
+
+        .helmet-visor {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 14px; /* Scaled down proportionally */
+            height: 9px;
+            background: linear-gradient(135deg, #1e90ff 0%, #000080 100%);
+            border-radius: 6px;
+            border: 1px solid #fff;
+        }
+
+        .sheep-legs {
+            position: absolute;
+            bottom: -8px;
+            left: 8px;
+            width: 30px; /* Scaled down proportionally */
+            height: 12px;
+        }
+
+        .leg {
+            position: absolute;
+            width: 3px; /* Scaled down proportionally */
+            height: 12px;
+            background: #d0d0d0;
+            border-radius: 2px;
+        }
+
+        .leg:nth-child(1) { left: 4px; }
+        .leg:nth-child(2) { left: 11px; }
+        .leg:nth-child(3) { left: 18px; }
+        .leg:nth-child(4) { left: 25px; }
+
+        .sheep-wool {
+            position: absolute;
+            top: -4px;
+            left: 4px;
+            width: 37px; /* Scaled down proportionally */
+            height: 22px;
+            background: radial-gradient(circle at 30% 30%, #f8f8f8 0%, #e0e0e0 70%);
+            border-radius: 11px;
+            opacity: 0.8;
+        }
+
+        /* Sheep floating animation */
+        @keyframes sheepFloat {
+            0% {
+                transform: translateX(-150px) translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+                transform: translateX(-100px) translateY(-20px) rotate(45deg);
+            }
+            20% {
+                transform: translateX(calc(20vw - 30px)) translateY(-20px) rotate(90deg);
+            }
+            40% {
+                transform: translateX(calc(40vw - 30px)) translateY(-20px) rotate(180deg);
+            }
+            60% {
+                transform: translateX(calc(60vw - 30px)) translateY(-20px) rotate(270deg);
+            }
+            80% {
+                transform: translateX(calc(80vw - 30px)) translateY(-20px) rotate(315deg);
+            }
+            95% {
+                opacity: 1;
+                transform: translateX(calc(100vw + 50px)) translateY(-20px) rotate(360deg);
+            }
+            100% {
+                transform: translateX(calc(100vw + 150px)) translateY(0px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         /* Responsive design for mobile devices */
         @media (max-width: 768px) {
             .main-title {
                 font-size: 3rem;
                 padding: 0 20px;
+            }
+            
+            .space-sheep {
+                width: 60px;
+                height: 60px;
+                top: 35%;
+            }
+            
+            .sheep-body {
+                width: 45px;
+                height: 30px;
+            }
+            
+            .sheep-head {
+                width: 20px;
+                height: 20px;
+                left: 25px;
+            }
+            
+            .astronaut-helmet {
+                width: 28px;
+                height: 28px;
+                left: 22px;
+            }
+            
+            .helmet-visor {
+                width: 15px;
+                height: 10px;
+                top: 6px;
+                left: 6px;
             }
         }
 
@@ -98,6 +246,22 @@
     <!-- Main title positioned at top quarter -->
     <div class="title-container">
         <h1 class="main-title">Chase Dun</h1>
+    </div>
+    
+    <!-- Animated Space Sheep with Astronaut Helmet -->
+    <div class="space-sheep">
+        <div class="sheep-wool"></div>
+        <div class="sheep-body"></div>
+        <div class="sheep-head"></div>
+        <div class="astronaut-helmet">
+            <div class="helmet-visor"></div>
+        </div>
+        <div class="sheep-legs">
+            <div class="leg"></div>
+            <div class="leg"></div>
+            <div class="leg"></div>
+            <div class="leg"></div>
+        </div>
     </div>
 
     <script>
@@ -125,43 +289,32 @@
 
             // Generate individual stars with random properties
             generateStars() {
-                const placedPositions = [];
-                
                 for (let i = 0; i < this.starCount; i++) {
-                    const star = this.createStar(placedPositions);
-                    if (star) {
-                        this.container.appendChild(star);
-                        this.stars.push(star);
-                        
-                        // Store the position to avoid clustering
-                        const rect = star.getBoundingClientRect();
-                        placedPositions.push({
-                            x: rect.left + rect.width / 2,
-                            y: rect.top + rect.height / 2
-                        });
-                    }
+                    const star = this.createStar();
+                    this.container.appendChild(star);
+                    this.stars.push(star);
                 }
             }
 
             // Create a single star element
-            createStar(placedPositions) {
+            createStar() {
                 const star = document.createElement('div');
                 star.className = 'star';
                 
-                let x, y;
-                let attempts = 0;
-                const maxAttempts = 100; // Increased attempts for better distribution
+                // Simple random positioning - much faster
+                const x = this.seededRandom() * window.innerWidth;
+                const y = this.seededRandom() * window.innerHeight;
                 
-                // Keep trying until we find a position not behind the title and not too close to other stars
-                do {
-                    x = this.seededRandom() * window.innerWidth;
-                    y = this.seededRandom() * window.innerHeight;
-                    attempts++;
-                } while ((this.isBehindTitle(x, y) || this.isTooCloseToOtherStars(x, y, placedPositions)) && attempts < maxAttempts);
-                
-                // If we couldn't find a good position after many attempts, skip this star
-                if (attempts >= maxAttempts) {
-                    return null;
+                // Skip if behind title (simple check)
+                if (this.isBehindTitle(x, y)) {
+                    // Just move it to a different area instead of retrying
+                    const newX = (x + window.innerWidth / 2) % window.innerWidth;
+                    const newY = (y + window.innerHeight / 2) % window.innerHeight;
+                    star.style.left = `${newX}px`;
+                    star.style.top = `${newY}px`;
+                } else {
+                    star.style.left = `${x}px`;
+                    star.style.top = `${y}px`;
                 }
                 
                 // Use seeded random for consistent positioning
@@ -174,15 +327,12 @@
                 const delay = this.seededRandom() * 8;
                 
                 // Calculate initial opacity based on delay and duration
-                // This ensures stars start at different points in their animation cycle
                 const cycleProgress = (delay / duration) % 1;
                 const initialOpacity = 0.1 + (0.9 * Math.sin(cycleProgress * 2 * Math.PI));
                 
                 // Apply styles with CSS custom properties for animation timing
                 star.style.width = `${size}px`;
                 star.style.height = `${size}px`;
-                star.style.left = `${x}px`;
-                star.style.top = `${y}px`;
                 star.style.opacity = Math.max(0.1, initialOpacity.toFixed(3)); // Ensure minimum visibility
                 star.style.setProperty('--duration', `${duration}s`);
                 star.style.setProperty('--delay', `-${delay}s`);
@@ -204,18 +354,7 @@
                        y <= titleRect.bottom + padding;
             }
 
-            // Check if a position is too close to other stars
-            isTooCloseToOtherStars(x, y, placedPositions) {
-                const minDistance = 15; // Minimum distance between star centers
-                
-                for (const pos of placedPositions) {
-                    const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
-                    if (distance < minDistance) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+
 
 
 
@@ -229,11 +368,15 @@
             new Starfield();
         });
 
-        // Regenerate stars on window resize for responsive design
+        // Optimized resize handler with debouncing
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            const starfield = document.getElementById('starfield');
-            starfield.innerHTML = '';
-            new Starfield();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const starfield = document.getElementById('starfield');
+                starfield.innerHTML = '';
+                new Starfield();
+            }, 150); // Wait 150ms after resize stops before regenerating
         });
     </script>
 </body>
