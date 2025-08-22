@@ -76,94 +76,32 @@
             50% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
         }
 
-        /* Animated Sheep with Astronaut Helmet */
-        .space-sheep {
+        /* Animated Space Llama with Astronaut Helmet */
+        .space-llama {
             position: absolute;
             top: 40%;
             left: -150px; /* Start off-screen */
-            width: 60px; /* Smaller size to appear farther away */
-            height: 60px;
+            width: 80px; /* Size for the llama image */
+            height: 80px;
             z-index: 3;
-            animation: sheepFloat 35s linear infinite;
+            animation: llamaFloat 35s linear infinite;
         }
 
-        .sheep-body {
-            position: absolute;
-            width: 45px; /* Scaled down proportionally */
-            height: 30px;
-            background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        .llama-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(1.1) contrast(1.1); /* Enhance the image slightly */
         }
 
-        .sheep-head {
-            position: absolute;
-            top: -12px;
-            left: 26px; /* Adjusted position for smaller size */
-            width: 19px; /* Scaled down proportionally */
-            height: 19px;
-            background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
 
-        .astronaut-helmet {
-            position: absolute;
-            top: -6px;
-            left: 22px; /* Adjusted position for smaller size */
-            width: 26px; /* Scaled down proportionally */
-            height: 26px;
-            background: linear-gradient(135deg, #87ceeb 0%, #4682b4 100%);
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
-        }
 
-        .helmet-visor {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            width: 14px; /* Scaled down proportionally */
-            height: 9px;
-            background: linear-gradient(135deg, #1e90ff 0%, #000080 100%);
-            border-radius: 6px;
-            border: 1px solid #fff;
-        }
 
-        .sheep-legs {
-            position: absolute;
-            bottom: -8px;
-            left: 8px;
-            width: 30px; /* Scaled down proportionally */
-            height: 12px;
-        }
 
-        .leg {
-            position: absolute;
-            width: 3px; /* Scaled down proportionally */
-            height: 12px;
-            background: #d0d0d0;
-            border-radius: 2px;
-        }
 
-        .leg:nth-child(1) { left: 4px; }
-        .leg:nth-child(2) { left: 11px; }
-        .leg:nth-child(3) { left: 18px; }
-        .leg:nth-child(4) { left: 25px; }
 
-        .sheep-wool {
-            position: absolute;
-            top: -4px;
-            left: 4px;
-            width: 37px; /* Scaled down proportionally */
-            height: 22px;
-            background: radial-gradient(circle at 30% 30%, #f8f8f8 0%, #e0e0e0 70%);
-            border-radius: 11px;
-            opacity: 0.8;
-        }
-
-        /* Sheep floating animation */
-        @keyframes sheepFloat {
+        /* Llama floating animation */
+        @keyframes llamaFloat {
             0% {
                 transform: translateX(-150px) translateY(0px) rotate(0deg);
                 opacity: 0;
@@ -201,35 +139,13 @@
                 padding: 0 20px;
             }
             
-            .space-sheep {
+            .space-llama {
                 width: 60px;
                 height: 60px;
                 top: 35%;
             }
             
-            .sheep-body {
-                width: 45px;
-                height: 30px;
-            }
-            
-            .sheep-head {
-                width: 20px;
-                height: 20px;
-                left: 25px;
-            }
-            
-            .astronaut-helmet {
-                width: 28px;
-                height: 28px;
-                left: 22px;
-            }
-            
-            .helmet-visor {
-                width: 15px;
-                height: 10px;
-                top: 6px;
-                left: 6px;
-            }
+
         }
 
         @media (max-width: 480px) {
@@ -248,20 +164,9 @@
         <h1 class="main-title">Chase Dun</h1>
     </div>
     
-    <!-- Animated Space Sheep with Astronaut Helmet -->
-    <div class="space-sheep">
-        <div class="sheep-wool"></div>
-        <div class="sheep-body"></div>
-        <div class="sheep-head"></div>
-        <div class="astronaut-helmet">
-            <div class="helmet-visor"></div>
-        </div>
-        <div class="sheep-legs">
-            <div class="leg"></div>
-            <div class="leg"></div>
-            <div class="leg"></div>
-            <div class="leg"></div>
-        </div>
+    <!-- Animated Space Llama -->
+    <div class="space-llama">
+        <img src="C:\Users\chase\Desktop\funny-llama.png" alt="Space Llama" class="llama-image">
     </div>
 
     <script>
