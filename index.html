@@ -79,10 +79,10 @@
         /* Animated Space Llama with Astronaut Helmet */
         .space-llama {
             position: absolute;
-            top: 40%;
-            left: -150px; /* Start off-screen */
-            width: 80px; /* Size for the llama image */
-            height: 80px;
+            top: 55%;
+            left: -100px; /* Start off-screen */
+            width: 150px; /* Size for the llama image */
+            height: 150px;
             z-index: 3;
             animation: llamaFloat 35s linear infinite;
         }
@@ -94,41 +94,30 @@
             filter: brightness(1.1) contrast(1.1); /* Enhance the image slightly */
         }
 
+        /* Space object styling */
+        .space-object {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .space-object-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
 
 
-
-
-
-        /* Llama floating animation */
+        /* Llama floating animation with rotation */
         @keyframes llamaFloat {
             0% {
-                transform: translateX(-150px) translateY(0px) rotate(0deg);
-                opacity: 0;
-            }
-            5% {
-                opacity: 1;
-                transform: translateX(-100px) translateY(-20px) rotate(45deg);
-            }
-            20% {
-                transform: translateX(calc(20vw - 30px)) translateY(-20px) rotate(90deg);
-            }
-            40% {
-                transform: translateX(calc(40vw - 30px)) translateY(-20px) rotate(180deg);
-            }
-            60% {
-                transform: translateX(calc(60vw - 30px)) translateY(-20px) rotate(270deg);
-            }
-            80% {
-                transform: translateX(calc(80vw - 30px)) translateY(-20px) rotate(315deg);
-            }
-            95% {
-                opacity: 1;
-                transform: translateX(calc(100vw + 50px)) translateY(-20px) rotate(360deg);
+                transform: translateX(-100px) rotate(0deg) scale(0.5);
             }
             100% {
-                transform: translateX(calc(100vw + 150px)) translateY(0px) rotate(360deg);
-                opacity: 0;
+                transform: translateX(calc(100vw + 300px)) rotate(700deg) scale(4);
             }
         }
 
@@ -194,6 +183,7 @@
 
             // Generate individual stars with random properties
             generateStars() {
+                this.starCount = window.innerWidth * window.innerHeight / 2000;
                 for (let i = 0; i < this.starCount; i++) {
                     const star = this.createStar();
                     this.container.appendChild(star);
@@ -251,7 +241,7 @@
                 if (!titleContainer) return false;
                 
                 const titleRect = titleContainer.getBoundingClientRect();
-                const padding = 20; // Extra padding around title
+                const padding = 10; // Extra padding around title
                 
                 return x >= titleRect.left - padding && 
                        x <= titleRect.right + padding && 
@@ -261,16 +251,149 @@
 
 
 
+        }
 
+        // Space object spawning and management
+        let lastSpawnedObject = null; // Track the last spawned object
+        let isMouseDown = false; // Track if mouse is held down
+        let lastSpawnPosition = null; // Track last spawn position for distance calculation
+        
+        function setupSpaceObjectSpawner() {
+            document.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                lastSpawnPosition = { x: e.clientX, y: e.clientY };
+                spawnSpaceObject(e.clientX, e.clientY);
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isMouseDown && lastSpawnPosition) {
+                    // Calculate distance moved since last spawn
+                    const distance = Math.sqrt(
+                        Math.pow(e.clientX - lastSpawnPosition.x, 2) + 
+                        Math.pow(e.clientY - lastSpawnPosition.y, 2)
+                    );
+                    
+                    // Spawn object every 10 pixels
+                    if (distance >= 50) {
+                        spawnSpaceObject(e.clientX, e.clientY);
+                        lastSpawnPosition = { x: e.clientX, y: e.clientY };
+                    }
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isMouseDown = false;
+                lastSpawnPosition = null;
+            });
+            
+            // Keep original click functionality for single clicks
+            document.addEventListener('click', (e) => {
+                if (!isMouseDown) { // Only spawn if not already spawning from drag
+                    spawnSpaceObject(e.clientX, e.clientY);
+                }
+            });
+        }
 
+        function spawnSpaceObject(x, y) {
+            // Randomly select between rocket, comet (asteroid), and UFO
+            const objects = [
+                {
+                    name: 'rocket',
+                    src: 'Images/cartoon_space_rocket.png',
+                    alt: 'Space Rocket'
+                },
+                {
+                    name: 'comet',
+                    src: 'Images/asteroid.png',
+                    alt: 'Space Comet'
+                },
+                {
+                    name: 'ufo',
+                    src: 'Images/ufo.png',
+                    alt: 'UFO'
+                }
+            ];
+            
+            // Filter out the last spawned object to avoid repeats
+            const availableObjects = objects.filter(obj => obj.name !== lastSpawnedObject);
+            
+            // If no objects available (shouldn't happen with 3 objects), use all objects
+            const objectsToChooseFrom = availableObjects.length > 0 ? availableObjects : objects;
+            
+            const selectedObject = objectsToChooseFrom[Math.floor(Math.random() * objectsToChooseFrom.length)];
+            
+            const spaceObject = document.createElement('div');
+            spaceObject.className = 'space-object';
+            
+            const spaceObjectImg = document.createElement('img');
+            spaceObjectImg.src = selectedObject.src;
+            spaceObjectImg.alt = selectedObject.alt;
+            spaceObjectImg.className = 'space-object-image';
+            
+            spaceObject.appendChild(spaceObjectImg);
+            document.body.appendChild(spaceObject);
+            
+            // Random direction (angle in radians)
+            const angle = Math.random() * 2 * Math.PI;
+            
+            // Random speed between 200-400 pixels per second
+            const speed = 200 + Math.random() * 200;
+            
+            // Calculate velocity components
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            
+            // Set initial position
+            spaceObject.style.left = (x - 30) + 'px'; // Center object on click
+            spaceObject.style.top = (y - 30) + 'px';
+            
+            // Orient object in direction of travel
+            if (selectedObject.name === 'rocket') {
+                // Rockets face their travel direction
+                const rotationDegrees = (angle * 180 / Math.PI) + 90; // +90 to align rocket nose with direction
+                spaceObject.style.transform = `rotate(${rotationDegrees}deg)`;
+            } else if (selectedObject.name === 'comet') {
+                // Comets face 180 degrees opposite to travel direction (trailing effect)
+                const rotationDegrees = (angle * 180 / Math.PI) + 90 + 180; // +90 for alignment + 180 for opposite direction
+                spaceObject.style.transform = `rotate(${rotationDegrees}deg)`;
+            }
+            // UFOs don't rotate (maintain original orientation)
+            
+            // Animate object movement
+            animateSpaceObject(spaceObject, vx, vy);
+            
+            // Update the last spawned object
+            lastSpawnedObject = selectedObject.name;
+        }
 
-
-
+        function animateSpaceObject(spaceObject, vx, vy) {
+            let x = parseFloat(spaceObject.style.left);
+            let y = parseFloat(spaceObject.style.top);
+            
+            const animate = () => {
+                x += vx * 0.016; // 60 FPS (16.67ms per frame)
+                y += vy * 0.016;
+                
+                spaceObject.style.left = x + 'px';
+                spaceObject.style.top = y + 'px';
+                
+                // Remove object when it goes off-screen
+                if (x < -100 || x > window.innerWidth + 100 || 
+                    y < -100 || y > window.innerHeight + 100) {
+                    spaceObject.remove();
+                    return;
+                }
+                
+                requestAnimationFrame(animate);
+            };
+            
+            requestAnimationFrame(animate);
         }
 
         // Initialize starfield when page loads
         document.addEventListener('DOMContentLoaded', () => {
             new Starfield();
+            setupSpaceObjectSpawner();
         });
 
         // Optimized resize handler with debouncing
@@ -281,7 +404,7 @@
                 const starfield = document.getElementById('starfield');
                 starfield.innerHTML = '';
                 new Starfield();
-            }, 150); // Wait 150ms after resize stops before regenerating
+            }, 50); // Wait 50ms after resize stops before regenerating
         });
     </script>
 </body>
