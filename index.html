@@ -68,6 +68,17 @@
             line-height: 1.1;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             animation: titleGlow 4s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Coming Soon text styling */
+        .coming-soon {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.8;
         }
 
         /* Title glow animation */
@@ -84,7 +95,18 @@
             width: 150px; /* Size for the llama image */
             height: 150px;
             z-index: 3;
-            animation: llamaFloat 25s ease-in-out infinite;
+            animation: llamaFloat 25s linear infinite;
+            --start-x: -100px;
+            --step-1: 100px;
+            --step-2: 300px;
+            --step-3: 500px;
+            --step-4: 700px;
+            --step-5: 900px;
+            --step-6: 1100px;
+            --step-7: 1300px;
+            --step-8: 1500px;
+            --step-9: 1700px;
+            --end-x: 1900px;
         }
 
         .llama-image {
@@ -111,22 +133,77 @@
 
 
 
-        /* Llama floating animation with rotation */
+        /* Llama floating animation with fixed pixel values for perfectly linear movement */
         @keyframes llamaFloat {
             0% {
-                transform: translateX(-100px) rotate(-30deg) scale(0.6);
+                transform: translateX(-100px) rotate(0deg);
             }
-            25% {
-                transform: translateX(calc(25vw - 75px)) rotate(45deg) scale(1.2);
+            10% {
+                transform: translateX(100px) rotate(36deg);
+            }
+            20% {
+                transform: translateX(300px) rotate(72deg);
+            }
+            30% {
+                transform: translateX(500px) rotate(108deg);
+            }
+            40% {
+                transform: translateX(700px) rotate(144deg);
             }
             50% {
-                transform: translateX(calc(50vw - 75px)) rotate(120deg) scale(1.8);
+                transform: translateX(900px) rotate(180deg);
             }
-            75% {
-                transform: translateX(calc(75vw - 75px)) rotate(280deg) scale(2.4);
+            60% {
+                transform: translateX(1100px) rotate(216deg);
+            }
+            70% {
+                transform: translateX(1300px) rotate(252deg);
+            }
+            80% {
+                transform: translateX(1500px) rotate(288deg);
+            }
+            90% {
+                transform: translateX(1700px) rotate(324deg);
             }
             100% {
-                transform: translateX(calc(100vw + 150px)) rotate(400deg) scale(2.8);
+                transform: translateX(1900px) rotate(360deg);
+            }
+        }
+
+        /* Llama floating animation using CSS custom properties for responsive linear movement */
+        @keyframes llamaFloat {
+            0% {
+                transform: translateX(var(--start-x)) rotate(0deg);
+            }
+            10% {
+                transform: translateX(var(--step-1)) rotate(36deg);
+            }
+            20% {
+                transform: translateX(var(--step-2)) rotate(72deg);
+            }
+            30% {
+                transform: translateX(var(--step-3)) rotate(108deg);
+            }
+            40% {
+                transform: translateX(var(--step-4)) rotate(144deg);
+            }
+            50% {
+                transform: translateX(var(--step-5)) rotate(180deg);
+            }
+            60% {
+                transform: translateX(var(--step-6)) rotate(216deg);
+            }
+            70% {
+                transform: translateX(var(--step-7)) rotate(252deg);
+            }
+            80% {
+                transform: translateX(var(--step-8)) rotate(288deg);
+            }
+            90% {
+                transform: translateX(var(--step-9)) rotate(324deg);
+            }
+            100% {
+                transform: translateX(var(--end-x)) rotate(360deg);
             }
         }
 
@@ -135,6 +212,10 @@
             .main-title {
                 font-size: 3rem;
                 padding: 0 20px;
+            }
+            
+            .coming-soon {
+                font-size: 1rem;
             }
             
             .space-llama {
@@ -150,6 +231,10 @@
             .main-title {
                 font-size: 2.5rem;
             }
+            
+            .coming-soon {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -160,6 +245,7 @@
     <!-- Main title positioned at top quarter -->
     <div class="title-container">
         <h1 class="main-title">Chase Dun</h1>
+        <p class="coming-soon">Coming Soon</p>
     </div>
     
     <!-- Animated Space Llama -->
@@ -395,7 +481,36 @@
         document.addEventListener('DOMContentLoaded', () => {
             new Starfield();
             setupSpaceObjectSpawner();
+            updateLlamaAnimation();
         });
+
+        // Function to calculate and update llama animation values
+        function updateLlamaAnimation() {
+            const spaceLlama = document.querySelector('.space-llama');
+            if (!spaceLlama) return;
+            
+            const screenWidth = window.innerWidth;
+            const llamaWidth = 150; // Width of the llama element
+            const startX = -llamaWidth; // Start off-screen left
+            const endX = screenWidth + llamaWidth; // End off-screen right
+            const totalDistance = endX - startX;
+            
+            // Calculate 10 evenly spaced steps
+            const stepSize = totalDistance / 10;
+            
+            // Set CSS custom properties for smooth, linear movement
+            spaceLlama.style.setProperty('--start-x', `${startX}px`);
+            spaceLlama.style.setProperty('--step-1', `${startX + stepSize}px`);
+            spaceLlama.style.setProperty('--step-2', `${startX + stepSize * 2}px`);
+            spaceLlama.style.setProperty('--step-3', `${startX + stepSize * 3}px`);
+            spaceLlama.style.setProperty('--step-4', `${startX + stepSize * 4}px`);
+            spaceLlama.style.setProperty('--step-5', `${startX + stepSize * 5}px`);
+            spaceLlama.style.setProperty('--step-6', `${startX + stepSize * 6}px`);
+            spaceLlama.style.setProperty('--step-7', `${startX + stepSize * 7}px`);
+            spaceLlama.style.setProperty('--step-8', `${startX + stepSize * 8}px`);
+            spaceLlama.style.setProperty('--step-9', `${startX + stepSize * 9}px`);
+            spaceLlama.style.setProperty('--end-x', `${endX}px`);
+        }
 
         // Optimized resize handler with debouncing
         let resizeTimeout;
@@ -405,6 +520,7 @@
                 const starfield = document.getElementById('starfield');
                 starfield.innerHTML = '';
                 new Starfield();
+                updateLlamaAnimation();
             }, 50); // Wait 50ms after resize stops before regenerating
         });
     </script>
